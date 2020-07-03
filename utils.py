@@ -47,19 +47,19 @@ def find_instruction(addr, vtil):
         instructions = basic_block.instructions
 
         for instruction in instructions:
-            code = ""
-            code += instruction.name + " "
-
-            for operand in instruction.operands:
-                operand = operand.operand
-
-                if isinstance(operand, VTILParser.RegisterDesc):
-                    code += to_string(operand.flags, operand.bit_offset, operand.bit_count, operand.combined_id)
-                    code += " "
-                else:
-                    code += hex(operand.imm) + " "
-
             if addr == 0:
+                code = ""
+                code += instruction.name + " "
+
+                for operand in instruction.operands:
+                    operand = operand.operand
+
+                    if isinstance(operand, VTILParser.RegisterDesc):
+                        code += to_string(operand.flags, operand.bit_offset, operand.bit_count, operand.combined_id)
+                        code += " "
+                    else:
+                        code += hex(operand.imm) + " "
+                
                 return code.strip()
             
             addr -= 1

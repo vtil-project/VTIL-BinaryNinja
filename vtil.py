@@ -3,7 +3,6 @@ from binaryninja.architecture import Architecture
 from binaryninja.function import RegisterInfo, InstructionInfo, InstructionTextToken
 from binaryninja.enums import InstructionTextTokenType, BranchType
 from binaryninja.filemetadata import FileMetadata
-from binaryninjaui import DockHandler
 
 from .parser import VTILParser
 from .utils import to_string, find_instruction, get_filename, find_block_address
