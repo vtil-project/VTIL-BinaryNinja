@@ -85,4 +85,5 @@ class VTILView(BinaryView):
         """
 
         self.add_entry_point(entry_addr)
+
         return True

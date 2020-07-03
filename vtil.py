@@ -277,12 +277,13 @@ class VTIL(Architecture):
                 tokens.append(InstructionTextToken(InstructionTextTokenType.InstructionToken, instr))
                 tokens.append(InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "))
                 for operand in operands:
-                    if "0x" in operand:
-                        tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, operand, value=int(operand, 16), size=64))
-                    elif instr == "jmp":
+                    if instr == "jmp":
                         tokens.append(InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip_{hex(next_vip[0])[2:]}"))
                     else:
-                        tokens.append(InstructionTextToken(InstructionTextTokenType.RegisterToken, operand))
+                        if "0x" in operand:
+                            tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, operand, value=int(operand, 16), size=64))
+                        else:
+                            tokens.append(InstructionTextToken(InstructionTextTokenType.RegisterToken, operand))
                     tokens.append(InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, ", "))
                 tokens.pop()
         else:
