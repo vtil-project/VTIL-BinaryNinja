@@ -56,7 +56,7 @@ class VTILView(BinaryView):
 
         entry_vip = vtil.entrypoint.entry_vip
         entry_addr = find_block_address(entry_vip, vtil)
-        symbol = Symbol(SymbolType.FunctionSymbol, entry_addr, f"_start_vip{entry_vip}")
+        symbol = Symbol(SymbolType.FunctionSymbol, entry_addr, f"_vip_{hex(entry_vip)[2:]}")
         self.define_auto_symbol(symbol)
 
         #conditionals = []
@@ -66,7 +66,7 @@ class VTILView(BinaryView):
             if entry_vip == vip: continue
 
             addr = find_block_address(vip, vtil)
-            symbol = Symbol(SymbolType.FunctionSymbol, addr, f"vip{vip}")
+            symbol = Symbol(SymbolType.FunctionSymbol, addr, f"vip_{hex(vip)[2:]}")
             self.define_auto_symbol(symbol)
 
             #self.add_function(addr)

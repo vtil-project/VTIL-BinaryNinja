@@ -262,12 +262,12 @@ class VTIL(Architecture):
 
                     if "0x" in operand:
                         if instr == "js":
-                            token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{int(operand, 16)}")
+                            token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip_{operand[2:]}")
                         else:
                             token_set[index] = InstructionTextToken(InstructionTextTokenType.IntegerToken, operand, value=int(operand, 16), size=64)
                     else:
                         if instr == "jmp":
-                            token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{next_vip}")
+                            token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip_{hex(next_vip[0])[2:]}")
                         else:
                             token_set[index] = InstructionTextToken(InstructionTextTokenType.RegisterToken, operand)
                 
@@ -280,7 +280,7 @@ class VTIL(Architecture):
                     if "0x" in operand:
                         tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, operand, value=int(operand, 16), size=64))
                     elif instr == "jmp":
-                        tokens.append(InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{next_vip[0]}"))
+                        tokens.append(InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip_{hex(next_vip[0])[2:]}"))
                     else:
                         tokens.append(InstructionTextToken(InstructionTextTokenType.RegisterToken, operand))
                     tokens.append(InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, ", "))
