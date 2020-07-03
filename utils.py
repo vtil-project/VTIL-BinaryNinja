@@ -77,7 +77,7 @@ def find_instruction(addr, vtil):
                     else:
                         code += hex(operand.imm) + " "
                 
-                return code.strip()
+                return basic_block.next_vip, code.strip()
             
             addr -= 1
 

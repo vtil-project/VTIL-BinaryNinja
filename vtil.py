@@ -211,7 +211,7 @@ class VTIL(Architecture):
             except:
                 return result
 
-        code = find_instruction(addr, self.vtil)
+        next_vip, code = find_instruction(addr, self.vtil)
 
         if code != None and code.startswith("js"):
             _, _, true, false = code.split(" ")
@@ -219,8 +219,14 @@ class VTIL(Architecture):
             false = find_block_address(int(false, 16), self.vtil)
             result.add_branch(BranchType.TrueBranch, true)
             result.add_branch(BranchType.FalseBranch, false)
+        elif code != None and code.startswith("vxcall"):
+            addr = find_block_address(next_vip[0], self.vtil)
+            result.add_branch(BranchType.UnconditionalBranch, addr)
         elif code != None and code.startswith("jmp"):
-            result.add_branch(BranchType.UnresolvedBranch)
+            addr = find_block_address(next_vip[0], self.vtil)
+            result.add_branch(BranchType.UnconditionalBranch, addr)
+        elif code != None and code.startswith("vexit"):
+            result.add_branch(BranchType.FunctionReturn)
 
         return result
 
@@ -234,7 +240,7 @@ class VTIL(Architecture):
                 tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "ERROR"))
                 return tokens, 1
 
-        code = find_instruction(addr, self.vtil)
+        next_vip, code = find_instruction(addr, self.vtil)
         if code == None:
             tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "ERROR"))
             return tokens, 1
@@ -253,13 +259,14 @@ class VTIL(Architecture):
                     operand = operands.pop(0)
                     if "0x" in operand:
                         if instr == "js":
-                            cond_addr = find_block_address(int(operand, 16), self.vtil)
-                            cond_addr = hex(cond_addr)
-                            token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"{cond_addr} (vip{int(operand, 16)})")
+                            token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{int(operand, 16)}")
                         else:
                             token_set[index] = InstructionTextToken(InstructionTextTokenType.IntegerToken, operand)
                     else:
-                        token_set[index] = InstructionTextToken(InstructionTextTokenType.RegisterToken, operand)
+                        if instr == "jmp":
+                            token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{next_vip}")
+                        else:
+                            token_set[index] = InstructionTextToken(InstructionTextTokenType.RegisterToken, operand)
                 
                 tokens.extend(token_set)
             else:
@@ -269,6 +276,8 @@ class VTIL(Architecture):
                 for operand in operands:
                     if "0x" in operand:
                         tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, operand))
+                    elif instr == "jmp":
+                        tokens.append(InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{next_vip[0]}"))
                     else:
                         tokens.append(InstructionTextToken(InstructionTextTokenType.RegisterToken, operand))
                     tokens.append(InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, ", "))
