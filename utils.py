@@ -5,6 +5,9 @@ from .parser import VTILParser
 
 from capstone import *
 
+import tempfile
+import os
+
 # from: https://github.com/vtil-project/VTIL-Core/blob/master/VTIL-Architecture/arch/register_desc.hpp#L40
 register_virtual        = 0
 register_physical       = 1 << 0
@@ -89,7 +92,9 @@ def get_filename():
     return ctx.getFilename()
     """
 
-    return open("file.txt", "r").read()
+    tmp = tempfile.gettempdir()
+    tmp = os.path.join(tmp, "vtil_binja.txt")
+    return open(tmp, "r").read()
 
 def find_block_address(vip, vtil):
     addr = 0

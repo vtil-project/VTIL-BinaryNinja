@@ -7,6 +7,9 @@ from binaryninja.log import log_error, log_info
 from .parser import VTILParser
 from .utils import find_block_address
 
+import tempfile
+import os
+
 class VTILView(BinaryView):
     name = "VTIL"
     long_name = "VTIL"
@@ -22,7 +25,9 @@ class VTILView(BinaryView):
         return True
     
     def init(self):
-        open("file.txt", "w").write(self.raw.file.filename)
+        tmp = tempfile.gettempdir()
+        tmp = os.path.join(tmp, "vtil_binja.txt")
+        open(tmp, "w").write(self.raw.file.filename)
         vtil = VTILParser.from_file(self.raw.file.filename)
         
         max_instructions = 0
