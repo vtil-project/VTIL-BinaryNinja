@@ -57,6 +57,9 @@ def to_string(flags, bit_offset, bit_count, local_id, architecture):
 def find_instruction(addr, vtil):
     for basic_block in vtil.explored_blocks.basic_blocks:
         instructions = basic_block.instructions
+        if addr - len(instructions) > 0:
+            addr -= len(instructions)
+            continue
 
         for instruction in instructions:
             if addr == 0:
