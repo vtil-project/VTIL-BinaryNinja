@@ -208,7 +208,8 @@ class VTIL(Architecture):
         if self.vtil == None:
             try:
                 self.vtil = VTILParser.from_file(get_filename())
-            except:
+            except Exception as ex:
+                log_error(str(ex))
                 return result
 
         next_vip, code = find_instruction(addr, self.vtil)
@@ -236,7 +237,8 @@ class VTIL(Architecture):
         if self.vtil == None:
             try:
                 self.vtil = VTILParser.from_file(get_filename())
-            except:
+            except Exception as ex:
+                log_error(str(ex))
                 tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "ERROR"))
                 return tokens, 1
 
