@@ -65,11 +65,127 @@ class VTIL(Architecture):
                 InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
                 InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
                 InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
-                InstructionTextToken(InstructionTextTokenType.TextToken, " == "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " != "),
                 InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
                 InstructionTextToken(InstructionTextTokenType.TextToken, ")")
             ],
             "operands": [2, 4, 6]
+        },
+        "tg": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "tg"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " > "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, ")")
+            ],
+            "operands": [2, 4, 6]
+        },
+        "tge": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "tge"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " >= "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, ")")
+            ],
+            "operands": [2, 4, 6]
+        },
+        "tl": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "tl"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " < "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, ")")
+            ],
+            "operands": [2, 4, 6]
+        },
+        "tle": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "tle"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " <= "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, ")")
+            ],
+            "operands": [2, 4, 6]
+        },
+        "tug": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "tug"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " u> "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, ")")
+            ],
+            "operands": [2, 4, 6]
+        },
+        "tuge": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "tuge"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " u>= "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, ")")
+            ],
+            "operands": [2, 4, 6]
+        },
+        "tul": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "tul"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " u< "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, ")")
+            ],
+            "operands": [2, 4, 6]
+        },
+        "tule": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "tule"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " := ("),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " u<= "),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, ")")
+            ],
+            "operands": [2, 4, 6]
+        },
+        "ifs": {
+            "tokens": [
+                InstructionTextToken(InstructionTextTokenType.InstructionToken, "ifs"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " := "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " ? "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, " : "),
+                InstructionTextToken(InstructionTextTokenType.IntegerToken, "0")
+            ],
+            "operands": [2, 4]
         },
         "js": {
             "tokens": [
