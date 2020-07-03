@@ -1,6 +1,9 @@
+from binaryninja.log import log_info, log_error
 from binaryninjaui import DockHandler
 
 from .parser import VTILParser
+
+from capstone import *
 
 # from: https://github.com/vtil-project/VTIL-Core/blob/master/VTIL-Architecture/arch/register_desc.hpp#L40
 register_virtual        = 0
@@ -19,8 +22,16 @@ register_special        = register_flags | register_stack_pointer | register_ima
 def is_internal(flags):
     return flags & register_internal == register_internal
 
+def get_physical(reg, arch):
+    cs = None
+    if arch == 0:
+        cs = Cs(CS_ARCH_X86, CS_MODE_64)
+    elif arch == 1:
+        cs = Cs(CS_ARCH_ARM, CS_MODE_ARM)
+    return cs.reg_name(reg)
+
 # from: https://github.com/vtil-project/VTIL-Core/blob/master/VTIL-Architecture/arch/register_desc.hpp#L244
-def to_string(flags, bit_offset, bit_count, local_id):
+def to_string(flags, bit_offset, bit_count, local_id, architecture):
     prefix = ""
     suffix = ""
 
@@ -38,7 +49,8 @@ def to_string(flags, bit_offset, bit_count, local_id):
     if flags & register_local:         return f"{prefix}t{local_id}{suffix}"
 
     if flags & register_physical:
-            return f"{prefix}PHYS_REG_UNKN{suffix}"
+        reg = get_physical(local_id, architecture)
+        return f"{prefix}{reg}{suffix}"
 
     return f"{prefix}vr{local_id}{suffix}"
 
@@ -55,7 +67,9 @@ def find_instruction(addr, vtil):
                     operand = operand.operand
 
                     if isinstance(operand, VTILParser.RegisterDesc):
-                        code += to_string(operand.flags, operand.bit_offset, operand.bit_count, operand.combined_id)
+                        architecture = int(bin(operand.combined_id)[2:].zfill(64)[:56], 2) # lol?
+                        local_id = int(bin(operand.combined_id)[2:].zfill(64)[56:], 2) # lol?
+                        code += to_string(operand.flags, operand.bit_offset, operand.bit_count, local_id, architecture)
                         code += " "
                     else:
                         code += hex(operand.imm) + " "
