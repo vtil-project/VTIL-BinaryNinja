@@ -43,7 +43,7 @@ class VTILView(BinaryView):
         symbol = Symbol(SymbolType.FunctionSymbol, entry_addr, f"_start_vip{entry_vip}")
         self.define_auto_symbol(symbol)
 
-        conditionals = []
+        #conditionals = []
         for basic_block in vtil.explored_blocks.basic_blocks:
             vip = basic_block.entry_vip
 
@@ -52,8 +52,10 @@ class VTILView(BinaryView):
             addr = find_block_address(vip, vtil)
             symbol = Symbol(SymbolType.FunctionSymbol, addr, f"vip{vip}")
             self.define_auto_symbol(symbol)
+
             #self.add_function(addr)
 
+        """
             if basic_block.instructions[-1].name == "js" or basic_block.instructions[-1].name == "jmp":
                 conditionals.extend(basic_block.next_vip)
 
@@ -64,6 +66,7 @@ class VTILView(BinaryView):
             func = self.get_function_at(addr)
             if func != None:
                 self.remove_function(func)
+        """
 
         self.add_entry_point(entry_addr)
         return True
