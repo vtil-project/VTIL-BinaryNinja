@@ -6,6 +6,7 @@ from .parser import VTILParser
 from capstone import *
 
 import tempfile
+import json
 import os
 
 # from: https://github.com/vtil-project/VTIL-Core/blob/master/VTIL-Architecture/arch/register_desc.hpp#L40
@@ -57,7 +58,15 @@ def to_string(flags, bit_offset, bit_count, local_id, architecture):
 
     return f"{prefix}vr{local_id}{suffix}"
 
-def find_instruction(addr, vtil):
+global_cache = None
+
+def find_instruction(addr, vtil, cached=True):
+    if cached:
+        global global_cache
+        if global_cache == None: global_cache = get_cache()
+        cache = global_cache[str(addr)]
+        return (cache["next_vip"], cache["code"])
+
     for basic_block in vtil.explored_blocks.basic_blocks:
         instructions = basic_block.instructions
         if addr - len(instructions) > 0:
@@ -85,16 +94,14 @@ def find_instruction(addr, vtil):
             addr -= 1
 
 def get_filename():
-    """
-    dock = DockHandler.getActiveDockHandler()
-    frame = dock.getViewFrame()
-    ctx = frame.getFileContext()
-    return ctx.getFilename()
-    """
-
     tmp = tempfile.gettempdir()
     tmp = os.path.join(tmp, "vtil_binja.txt")
     return open(tmp, "r").read()
+
+def get_cache():
+    tmp = tempfile.gettempdir()
+    tmp = os.path.join(tmp, "vtil_binja.json")
+    return json.load(open(tmp, "r"))
 
 def find_block_address(vip, vtil):
     addr = 0

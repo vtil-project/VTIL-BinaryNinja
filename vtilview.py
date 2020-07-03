@@ -5,9 +5,10 @@ from binaryninja.enums import SegmentFlag, SectionSemantics, SymbolType
 from binaryninja.log import log_error, log_info
 
 from .parser import VTILParser
-from .utils import find_block_address
+from .utils import find_block_address, find_instruction, get_filename
 
 import tempfile
+import json
 import os
 
 class VTILView(BinaryView):
@@ -33,6 +34,16 @@ class VTILView(BinaryView):
         max_instructions = 0
         for basic_block in vtil.explored_blocks.basic_blocks:
             max_instructions += len(basic_block.instructions)
+        cache = {}
+        for i in range(0, max_instructions):
+            next_vip, code = find_instruction(i, vtil, cached=False) # cache
+            cache[i] = {
+                "next_vip": next_vip,
+                "code": code
+            }
+        tmp = tempfile.gettempdir()
+        tmp = os.path.join(tmp, "vtil_binja.json")
+        json.dump(cache, open(tmp, "w"))
 
         self.add_auto_segment(
             0, max_instructions, 0, max_instructions,
