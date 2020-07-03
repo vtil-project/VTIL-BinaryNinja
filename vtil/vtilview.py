@@ -68,6 +68,7 @@ class VTILView(BinaryView):
             addr = find_block_address(vip, vtil)
             symbol = Symbol(SymbolType.FunctionSymbol, addr, f"vip_{hex(vip)[2:]}")
             self.define_auto_symbol(symbol)
+            self.set_comment_at(addr, f"vip_{hex(vip)[2:]}:")
 
             #self.add_function(addr)
 

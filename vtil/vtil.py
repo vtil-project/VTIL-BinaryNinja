@@ -249,6 +249,7 @@ class VTIL(Architecture):
         
         if " " in code:
             instr, operands = code.split(" ", 1)
+
             if " " in operands:
                 operands = operands.split(" ")
             else:
@@ -276,6 +277,7 @@ class VTIL(Architecture):
                 # fallback
                 tokens.append(InstructionTextToken(InstructionTextTokenType.InstructionToken, instr))
                 tokens.append(InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "))
+                
                 for operand in operands:
                     if instr == "jmp":
                         tokens.append(InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip_{hex(next_vip[0])[2:]}"))
@@ -285,6 +287,7 @@ class VTIL(Architecture):
                         else:
                             tokens.append(InstructionTextToken(InstructionTextTokenType.RegisterToken, operand))
                     tokens.append(InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, ", "))
+                
                 tokens.pop()
         else:
             tokens.append(InstructionTextToken(InstructionTextTokenType.InstructionToken, code))
