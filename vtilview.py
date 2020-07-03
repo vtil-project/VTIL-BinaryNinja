@@ -61,7 +61,6 @@ class VTILView(BinaryView):
             if entry_vip == conditional: continue
 
             addr = find_block_address(conditional, vtil)
-            log_info(hex(addr))
             func = self.get_function_at(addr)
             if func != None:
                 self.remove_function(func)
