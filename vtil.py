@@ -259,11 +259,12 @@ class VTIL(Architecture):
 
                 for index in self.instructions[instr]["operands"]:
                     operand = operands.pop(0)
+
                     if "0x" in operand:
                         if instr == "js":
                             token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{int(operand, 16)}")
                         else:
-                            token_set[index] = InstructionTextToken(InstructionTextTokenType.IntegerToken, operand)
+                            token_set[index] = InstructionTextToken(InstructionTextTokenType.IntegerToken, operand, value=int(operand, 16), size=64)
                     else:
                         if instr == "jmp":
                             token_set[index] = InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{next_vip}")
@@ -277,7 +278,7 @@ class VTIL(Architecture):
                 tokens.append(InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "))
                 for operand in operands:
                     if "0x" in operand:
-                        tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, operand))
+                        tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, operand, value=int(operand, 16), size=64))
                     elif instr == "jmp":
                         tokens.append(InstructionTextToken(InstructionTextTokenType.GotoLabelToken, f"vip{next_vip[0]}"))
                     else:
