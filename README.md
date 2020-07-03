@@ -8,7 +8,7 @@ Copy the folder called `vtil` in this repository into your Binary Ninja plugin d
 ![](images/example.png)
 
 ## Dislcaimer
-This is a **very early proof of concept**. Expect bugs and instability issues.  
+This is a **very early proof of concept**. Expect bugs.  
 
 Known issues:
 - Only one VTIL file supported per Binary Ninja process
