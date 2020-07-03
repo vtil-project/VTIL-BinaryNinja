@@ -5,6 +5,7 @@ from binaryninja.enums import SegmentFlag, SectionSemantics, SymbolType
 from binaryninja.log import log_error, log_info
 
 from .parser import VTILParser
+from .utils import find_block_address
 
 class VTILView(BinaryView):
     name = "VTIL"
@@ -36,8 +37,34 @@ class VTILView(BinaryView):
             ".text", 0, max_instructions,
             SectionSemantics.ReadOnlyCodeSectionSemantics
         )
-        vip = vtil.entrypoint.entry_vip
-        self.add_entry_point(vip)
-        symbol = Symbol(SymbolType.FunctionSymbol, vip, f"_vip{vip}")
+
+        entry_vip = vtil.entrypoint.entry_vip
+        entry_addr = find_block_address(entry_vip, vtil)
+        symbol = Symbol(SymbolType.FunctionSymbol, entry_addr, f"_start_vip{entry_vip}")
         self.define_auto_symbol(symbol)
+        
+        conditionals = []
+        for basic_block in vtil.explored_blocks.basic_blocks:
+            vip = basic_block.entry_vip
+
+            if entry_vip == vip: continue
+
+            addr = find_block_address(vip, vtil)
+            symbol = Symbol(SymbolType.FunctionSymbol, addr, f"vip{vip}")
+            self.define_auto_symbol(symbol)
+            self.add_function(addr)
+
+            if basic_block.instructions[-1].name == "js":
+                conditionals.append(basic_block.instructions[-1].operands[1].operand.imm)
+                conditionals.append(basic_block.instructions[-1].operands[2].operand.imm)
+
+        for conditional in conditionals:
+            if entry_vip == conditional: continue
+
+            addr = find_block_address(conditional, vtil)
+            func = self.get_function_at(addr)
+            if func != None:
+                self.remove_function(func)
+
+        self.add_entry_point(entry_addr)
         return True

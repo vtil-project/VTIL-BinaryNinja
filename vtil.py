@@ -103,6 +103,8 @@ class VTIL(Architecture):
             false = find_block_address(int(false, 16), self.vtil)
             result.add_branch(BranchType.TrueBranch, true)
             result.add_branch(BranchType.FalseBranch, false)
+        elif code != None and code.startswith("jmp"):
+            result.add_branch(BranchType.UnresolvedBranch)
 
         return result
 
