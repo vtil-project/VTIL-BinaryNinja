@@ -22,8 +22,7 @@ class VTILView(BinaryView):
 
     @classmethod
     def is_valid_for_data(self, data):
-        # TODO: Check headers
-        return True
+        return data[0:4] == b'VTIL'
     
     def init(self):
         tmp = tempfile.gettempdir()
