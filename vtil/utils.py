@@ -94,6 +94,7 @@ def find_instruction(addr, vtil):
                 vtil.parser_cache[addr] = res
                 return res
             it -= 1
+
 def find_block_address(vip, vtil):
     addr = 0
 

@@ -35,7 +35,7 @@ class VTILView(BinaryView):
 
         # Fill the cache
         for i in range(0, max_instructions):
-            next_vip, sp_index, sp_reset, sp_offset, code = find_instruction(i, self.vtil)
+            find_instruction(i, self.vtil)
 
         self.add_auto_segment(
             0, max_instructions, 0, max_instructions,
@@ -59,7 +59,6 @@ class VTILView(BinaryView):
             branch_ins = basic_block.instructions[-1]
             if branch_ins.name == "jmp":
                 if isinstance(branch_ins.operands[0].operand, VTILParser.RegisterDesc):
-                    block_targets = [find_block_address(vip, self.vtil) for vip in basic_block.next_vip]
                     self.set_comment_at(addr + len(basic_block.instructions) - 1, "Indirect => { " + ', '.join('vip_{:x}'.format(trgt) for trgt in basic_block.next_vip) + " }")
 
             if entry_vip == vip: continue
