@@ -65,7 +65,7 @@ def find_instruction(addr, vtil, cached=True):
         global global_cache
         if global_cache == None: global_cache = get_cache()
         cache = global_cache[str(addr)]
-        return (cache["next_vip"], cache["code"])
+        return (cache["next_vip"], cache["sp_index"], cache["sp_reset"], cache["sp_offset"], cache["code"])
 
     for basic_block in vtil.explored_blocks.basic_blocks:
         instructions = basic_block.instructions
@@ -89,7 +89,7 @@ def find_instruction(addr, vtil, cached=True):
                     else:
                         code += hex(operand.imm) + " "
                 
-                return basic_block.next_vip, code.strip()
+                return basic_block.next_vip, instruction.sp_index, instruction.sp_reset, instruction.sp_offset, code.strip()
             
             addr -= 1
 

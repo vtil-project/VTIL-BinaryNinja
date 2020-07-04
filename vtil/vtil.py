@@ -212,7 +212,7 @@ class VTIL(Architecture):
                 log_error(str(ex))
                 return result
 
-        next_vip, code = find_instruction(addr, self.vtil)
+        next_vip, _, _, _, code = find_instruction(addr, self.vtil)
 
         if code != None and code.startswith("js"):
             _, _, true, false = code.split(" ")
@@ -242,10 +242,30 @@ class VTIL(Architecture):
                 tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "ERROR"))
                 return tokens, 1
 
-        next_vip, code = find_instruction(addr, self.vtil)
+        next_vip, sp_index, sp_reset, sp_offset, code = find_instruction(addr, self.vtil)
         if code == None:
             tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "ERROR"))
             return tokens, 1
+
+        #if sp_index > 0:
+        tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "["))
+        tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, str(sp_index), value=sp_index, size=64))
+        tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "] "))
+
+        prefix = "-"
+        if sp_offset >= 0: prefix = "+"
+        sp_offset = abs(sp_offset)
+
+        if sp_reset > 0:
+            txt = f">{prefix}{hex(sp_offset)}"
+            txt = f"{txt:<6}"
+            tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, txt))
+        else:
+            txt = f"{prefix}{hex(sp_offset)}"
+            txt = f"{txt:<6}"
+            tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, txt))
+        tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, " "))
+
         
         if " " in code:
             instr, operands = code.split(" ", 1)

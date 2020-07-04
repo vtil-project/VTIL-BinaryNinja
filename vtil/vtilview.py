@@ -36,9 +36,12 @@ class VTILView(BinaryView):
             max_instructions += len(basic_block.instructions)
         cache = {}
         for i in range(0, max_instructions):
-            next_vip, code = find_instruction(i, vtil, cached=False) # cache
+            next_vip, sp_index, sp_reset, sp_offset, code = find_instruction(i, vtil, cached=False) # cache
             cache[i] = {
                 "next_vip": next_vip,
+                "sp_index": sp_index,
+                "sp_reset": sp_reset,
+                "sp_offset": sp_offset,
                 "code": code
             }
         tmp = tempfile.gettempdir()
