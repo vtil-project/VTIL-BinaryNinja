@@ -3,15 +3,21 @@ from binaryninja.architecture import Architecture
 from binaryninja.function import RegisterInfo, InstructionInfo, InstructionTextToken
 from binaryninja.enums import InstructionTextTokenType, BranchType
 from binaryninja.filemetadata import FileMetadata
-
 from .parser import VTILParser
-from .utils import to_string, find_instruction, get_filename, find_block_address
+from .utils import to_string, find_instruction, find_block_address
+
+# Still a horrible hack but better than files.
+#
+active_vtil_file = None
+
+def set_active_vtil_file(vtil_struct):
+    global active_vtil_file
+    active_vtil_file = vtil_struct
 
 class VTIL(Architecture):
     name = "VTIL"
-    max_length = 1
+    max_instr_length = 1
     stack_pointer = "$sp"
-    vtil = None
 
     regs = {
         "$sp" : RegisterInfo("$sp", 1)
@@ -202,52 +208,39 @@ class VTIL(Architecture):
     }
 
     def get_instruction_info(self, data, addr):
+        global active_vtil_file
         result = InstructionInfo()
         result.length = 1
 
-        if self.vtil == None:
-            try:
-                self.vtil = VTILParser.from_file(get_filename())
-            except Exception as ex:
-                log_error(str(ex))
-                return result
-
-        next_vip, _, _, _, code = find_instruction(addr, self.vtil)
+        next_vip, _, _, _, code = find_instruction(addr, active_vtil_file)
 
         if code != None and code.startswith("js"):
             _, _, true, false = code.split(" ")
-            true = find_block_address(int(true, 16), self.vtil)
-            false = find_block_address(int(false, 16), self.vtil)
+            true = find_block_address(int(true, 16), active_vtil_file)
+            false = find_block_address(int(false, 16), active_vtil_file)
             result.add_branch(BranchType.TrueBranch, true)
             result.add_branch(BranchType.FalseBranch, false)
         elif code != None and code.startswith("vxcall"):
-            addr = find_block_address(next_vip[0], self.vtil)
+            addr = find_block_address(next_vip[0], active_vtil_file)
             result.add_branch(BranchType.UnconditionalBranch, addr)
         elif code != None and code.startswith("jmp"):
             if len(next_vip) == 1:
-                addr = find_block_address(next_vip[0], self.vtil)
+                addr = find_block_address(next_vip[0], active_vtil_file)
                 result.add_branch(BranchType.UnconditionalBranch, addr)
             else:
                 result.add_branch(BranchType.IndirectBranch)
                 for vip in next_vip:
-                    result.add_branch(BranchType.UnconditionalBranch, find_block_address(vip, self.vtil))
+                    result.add_branch(BranchType.UnconditionalBranch, find_block_address(vip, active_vtil_file))
         elif code != None and code.startswith("vexit"):
             result.add_branch(BranchType.FunctionReturn)
 
         return result
 
     def get_instruction_text(self, data, addr):
+        global active_vtil_file
         tokens = []
 
-        if self.vtil == None:
-            try:
-                self.vtil = VTILParser.from_file(get_filename())
-            except Exception as ex:
-                log_error(str(ex))
-                tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "ERROR"))
-                return tokens, 1
-
-        next_vip, sp_index, sp_reset, sp_offset, code = find_instruction(addr, self.vtil)
+        next_vip, sp_index, sp_reset, sp_offset, code = find_instruction(addr, active_vtil_file)
         if code == None:
             tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "ERROR"))
             return tokens, 1

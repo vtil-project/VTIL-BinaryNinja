@@ -58,23 +58,24 @@ def to_string(flags, bit_offset, bit_count, local_id, architecture):
 
     return f"{prefix}vr{local_id}{suffix}"
 
-global_cache = None
+def find_instruction(addr, vtil):
+    # Initialize the cache if not done already.
+    if not hasattr(vtil, "parser_cache"):
+        setattr(vtil, "parser_cache", {})
 
-def find_instruction(addr, vtil, cached=True):
-    if cached:
-        global global_cache
-        if global_cache == None: global_cache = get_cache()
-        cache = global_cache[str(addr)]
-        return (cache["next_vip"], cache["sp_index"], cache["sp_reset"], cache["sp_offset"], cache["code"])
+    # If cached already, return the reslt.
+    if addr in vtil.parser_cache:
+        return vtil.parser_cache[addr]
+    it = addr
 
     for basic_block in vtil.explored_blocks.basic_blocks:
         instructions = basic_block.instructions
-        if addr - len(instructions) > 0:
-            addr -= len(instructions)
+        if it - len(instructions) > 0:
+            it -= len(instructions)
             continue
 
         for instruction in instructions:
-            if addr == 0:
+            if it == 0:
                 code = ""
                 code += instruction.name + " "
 
@@ -89,20 +90,10 @@ def find_instruction(addr, vtil, cached=True):
                     else:
                         code += hex(operand.imm) + " "
                 
-                return basic_block.next_vip, instruction.sp_index, instruction.sp_reset, instruction.sp_offset, code.strip()
-            
-            addr -= 1
-
-def get_filename():
-    tmp = tempfile.gettempdir()
-    tmp = os.path.join(tmp, "vtil_binja.txt")
-    return open(tmp, "r").read()
-
-def get_cache():
-    tmp = tempfile.gettempdir()
-    tmp = os.path.join(tmp, "vtil_binja.json")
-    return json.load(open(tmp, "r"))
-
+                res = (basic_block.next_vip, instruction.sp_index, instruction.sp_reset, instruction.sp_offset, code.strip())
+                vtil.parser_cache[addr] = res
+                return res
+            it -= 1
 def find_block_address(vip, vtil):
     addr = 0
 
