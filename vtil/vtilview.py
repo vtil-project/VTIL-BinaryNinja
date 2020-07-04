@@ -62,31 +62,24 @@ class VTILView(BinaryView):
         symbol = Symbol(SymbolType.FunctionSymbol, entry_addr, f"_vip_{hex(entry_vip)[2:]}")
         self.define_auto_symbol(symbol)
 
-        #conditionals = []
         for basic_block in vtil.explored_blocks.basic_blocks:
             vip = basic_block.entry_vip
+            addr = find_block_address(vip, vtil)
+
+            # Append a comment to help with indirect jumps:
+            branch_ins = basic_block.instructions[-1]
+            if branch_ins.name == "jmp":
+                print(type(branch_ins.operands[0].operand))
+                if isinstance(branch_ins.operands[0].operand, VTILParser.RegisterDesc):
+                    block_targets = [find_block_address(vip, vtil) for vip in basic_block.next_vip]
+                    self.set_comment_at(addr + len(basic_block.instructions) - 1, "Indirect => { " + ', '.join('vip_{:x}'.format(trgt) for trgt in basic_block.next_vip) + " }")
 
             if entry_vip == vip: continue
 
-            addr = find_block_address(vip, vtil)
             symbol = Symbol(SymbolType.FunctionSymbol, addr, f"vip_{hex(vip)[2:]}")
             self.define_auto_symbol(symbol)
             self.set_comment_at(addr, f"vip_{hex(vip)[2:]}:")
 
-            #self.add_function(addr)
-
-        """
-            if basic_block.instructions[-1].name == "js" or basic_block.instructions[-1].name == "jmp":
-                conditionals.extend(basic_block.next_vip)
-
-        for conditional in conditionals:
-            if entry_vip == conditional: continue
-
-            addr = find_block_address(conditional, vtil)
-            func = self.get_function_at(addr)
-            if func != None:
-                self.remove_function(func)
-        """
 
         self.add_entry_point(entry_addr)
 
