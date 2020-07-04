@@ -247,10 +247,12 @@ class VTIL(Architecture):
             tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "ERROR"))
             return tokens, 1
 
-        #if sp_index > 0:
-        tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "["))
-        tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, str(sp_index), value=sp_index, size=64))
-        tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "] "))
+        if sp_index > 0:
+            tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "["))
+            tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, str(sp_index), value=sp_index, size=64))
+            tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "] "))
+        else:
+            tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "    "))
 
         prefix = "-"
         if sp_offset >= 0: prefix = "+"
