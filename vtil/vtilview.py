@@ -69,7 +69,6 @@ class VTILView(BinaryView):
             # Append a comment to help with indirect jumps:
             branch_ins = basic_block.instructions[-1]
             if branch_ins.name == "jmp":
-                print(type(branch_ins.operands[0].operand))
                 if isinstance(branch_ins.operands[0].operand, VTILParser.RegisterDesc):
                     block_targets = [find_block_address(vip, vtil) for vip in basic_block.next_vip]
                     self.set_comment_at(addr + len(basic_block.instructions) - 1, "Indirect => { " + ', '.join('vip_{:x}'.format(trgt) for trgt in basic_block.next_vip) + " }")
