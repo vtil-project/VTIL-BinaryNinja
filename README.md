@@ -2,7 +2,7 @@
 VTIL meets Binary Ninja and provides you with a solution to analyze VTIL code in a less painful manner.
 
 ## Installation
-Copy the folder called `vtil` in this repository into your Binary Ninja plugin directory.
+Install via the Plugin Manager in Binary Ninja, or clone this repository into your [plugin folder](https://docs.binary.ninja/guide/plugins.html#using-plugins).
 
 ## Screenshots
 ![](images/example.png)
