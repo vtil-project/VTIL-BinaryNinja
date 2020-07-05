@@ -56,10 +56,18 @@ class VTILView(BinaryView):
             addr = find_block_address(vip, self.vtil)
 
             # Append a comment to help with indirect jumps:
+            comment = ""
             branch_ins = basic_block.instructions[-1]
             if branch_ins.name == "jmp":
                 if isinstance(branch_ins.operands[0].operand, VTILParser.RegisterDesc):
-                    self.set_comment_at(addr + len(basic_block.instructions) - 1, "Indirect => { " + ', '.join('vip_{:x}'.format(trgt) for trgt in basic_block.next_vip) + " }")
+                    comment += "Indirect => { " + ', '.join('vip_{:x}'.format(trgt) for trgt in basic_block.next_vip) + " }"
+
+            if basic_block.sp_offset != branch_ins.sp_offset:
+                if comment != "": comment += " | "
+                comment += f"SP Delta: {hex(basic_block.sp_offset)}"
+
+            if comment != "":
+                self.set_comment_at(addr + len(basic_block.instructions) - 1, comment)
 
             if entry_vip == vip: continue
 
