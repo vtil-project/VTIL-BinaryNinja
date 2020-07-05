@@ -8,7 +8,7 @@ Note: If you default to an IL view, you will need to manually make sure you sele
 ## Screenshots
 ![](images/example.png)
 
-## Dislcaimer
+## Disclaimer
 This is a **very early proof of concept**. Expect bugs.  
 
 Known issues:
