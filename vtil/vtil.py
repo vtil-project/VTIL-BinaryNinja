@@ -247,10 +247,10 @@ class VTIL(Architecture):
 
         if sp_index > 0:
             tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "["))
-            tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, str(sp_index), value=sp_index, size=64))
+            tokens.append(InstructionTextToken(InstructionTextTokenType.IntegerToken, f"{int(sp_index):>2}", value=sp_index, size=64))
             tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "] "))
         else:
-            tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "    "))
+            tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, "     "))
 
         prefix = "-"
         if sp_offset >= 0: prefix = "+"
@@ -261,7 +261,7 @@ class VTIL(Architecture):
             txt = f"{txt:<6}"
             tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, txt))
         else:
-            txt = f"{prefix}{hex(sp_offset)}"
+            txt = f" {prefix}{hex(sp_offset)}"
             txt = f"{txt:<6}"
             tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, txt))
         tokens.append(InstructionTextToken(InstructionTextTokenType.TextToken, " "))
