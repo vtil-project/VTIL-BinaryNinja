@@ -184,14 +184,16 @@ class VTIL(Architecture):
         "ifs": {
             "tokens": [
                 InstructionTextToken(InstructionTextTokenType.InstructionToken, "ifs"),
+                InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " "),
+                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
                 InstructionTextToken(InstructionTextTokenType.OperandSeparatorToken, " := "),
                 InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
                 InstructionTextToken(InstructionTextTokenType.TextToken, " ? "),
-                InstructionTextToken(InstructionTextTokenType.RegisterToken, "UNKNOWN"),
+                InstructionTextToken(InstructionTextTokenType.TextToken, "UNKNOWN"),
                 InstructionTextToken(InstructionTextTokenType.TextToken, " : "),
                 InstructionTextToken(InstructionTextTokenType.IntegerToken, "0")
             ],
-            "operands": [2, 4]
+            "operands": [2, 4, 6]
         },
         "js": {
             "tokens": [
