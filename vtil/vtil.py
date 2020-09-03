@@ -217,11 +217,16 @@ class VTIL(Architecture):
         next_vip, _, _, _, code = find_instruction(addr, active_vtil_file)
 
         if code != None and code.startswith("js"):
-            _, _, true, false = code.split(" ")
-            true = find_block_address(int(true, 16), active_vtil_file)
-            false = find_block_address(int(false, 16), active_vtil_file)
-            result.add_branch(BranchType.TrueBranch, true)
-            result.add_branch(BranchType.FalseBranch, false)
+            try:
+                true = find_block_address(int(true, 16), active_vtil_file)
+                false = find_block_address(int(false, 16), active_vtil_file)
+                result.add_branch(BranchType.TrueBranch, true)
+                result.add_branch(BranchType.FalseBranch, false)
+            except ValueError:
+                v1 = find_block_address(next_vip[0], active_vtil_file)
+                v2 = find_block_address(next_vip[1], active_vtil_file)
+                result.add_branch(BranchType.UnconditionalBranch, v2)
+                result.add_branch(BranchType.UnconditionalBranch, v1)
         elif code != None and code.startswith("vxcall"):
             addr = find_block_address(next_vip[0], active_vtil_file)
             result.add_branch(BranchType.UnconditionalBranch, addr)
