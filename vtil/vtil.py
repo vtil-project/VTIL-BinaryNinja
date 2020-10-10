@@ -218,6 +218,7 @@ class VTIL(Architecture):
 
         if code != None and code.startswith("js"):
             try:
+                _, _, true, false = code.split(" ")
                 true = find_block_address(int(true, 16), active_vtil_file)
                 false = find_block_address(int(false, 16), active_vtil_file)
                 result.add_branch(BranchType.TrueBranch, true)
