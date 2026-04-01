@@ -27,10 +27,11 @@
 	"dependencies": {
 		"pip": [
 			"kaitaistruct",
-			"capstone"
+			"capstone",
+			"packaging"
 		]
 	},
-	"version": "1.2",
+	"version": "1.2.1",
 	"author": "Layle",
 	"minimumbinaryninjaversion": 1528
 }
