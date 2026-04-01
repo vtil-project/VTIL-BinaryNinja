@@ -1,0 +1,3 @@
+kaitaistruct>=0.10
+capstone>=5.0.0
+setuptools>=65

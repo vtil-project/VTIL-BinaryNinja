@@ -1,13 +1,6 @@
-from binaryninja.log import log_info, log_error
-from binaryninjaui import DockHandler
-
 from .parser import VTILParser
 
 from capstone import *
-
-import tempfile
-import json
-import os
 
 # from: https://github.com/vtil-project/VTIL-Core/blob/master/VTIL-Architecture/arch/register_desc.hpp#L40
 register_virtual        = 0
@@ -58,7 +51,32 @@ def to_string(flags, bit_offset, bit_count, local_id, architecture):
 
     return f"{prefix}vr{local_id}{suffix}"
 
-def find_instruction(addr, vtil):
+
+def decode_register_desc(operand):
+    architecture = int(bin(operand.combined_id)[2:].zfill(64)[:56], 2)
+    local_id = int(bin(operand.combined_id)[2:].zfill(64)[56:], 2)
+    text = to_string(operand.flags, operand.bit_offset, operand.bit_count, local_id, architecture)
+    return {
+        "kind": "reg",
+        "text": text,
+        "flags": operand.flags,
+        "bit_offset": operand.bit_offset,
+        "bit_count": operand.bit_count,
+        "local_id": local_id,
+        "architecture": architecture,
+    }
+
+
+def decode_immediate_desc(operand):
+    return {
+        "kind": "imm",
+        "text": hex(operand.imm),
+        "value": operand.imm,
+        "bit_count": operand.bitcount,
+    }
+
+
+def decode_instruction(addr, vtil):
     # Initialize the cache if not done already.
     if not hasattr(vtil, "parser_cache"):
         setattr(vtil, "parser_cache", {})
@@ -66,8 +84,8 @@ def find_instruction(addr, vtil):
     # If cached already, return the reslt.
     if addr in vtil.parser_cache:
         return vtil.parser_cache[addr]
-    it = addr
 
+    it = addr
     for basic_block in vtil.explored_blocks.basic_blocks:
         instructions = basic_block.instructions
         if it - len(instructions) > 0:
@@ -76,24 +94,46 @@ def find_instruction(addr, vtil):
 
         for instruction in instructions:
             if it == 0:
-                code = ""
-                code += instruction.name + " "
+                decoded_operands = []
+                rendered = []
 
-                for operand in instruction.operands:
-                    operand = operand.operand
-
+                for op in instruction.operands:
+                    operand = op.operand
                     if isinstance(operand, VTILParser.RegisterDesc):
-                        architecture = int(bin(operand.combined_id)[2:].zfill(64)[:56], 2) # lol?
-                        local_id = int(bin(operand.combined_id)[2:].zfill(64)[56:], 2) # lol?
-                        code += to_string(operand.flags, operand.bit_offset, operand.bit_count, local_id, architecture)
-                        code += " "
+                        decoded = decode_register_desc(operand)
                     else:
-                        code += hex(operand.imm) + " "
-                
-                res = (basic_block.next_vip, instruction.sp_index, instruction.sp_reset, instruction.sp_offset, code.strip())
+                        decoded = decode_immediate_desc(operand)
+                    decoded_operands.append(decoded)
+                    rendered.append(decoded["text"])
+
+                rendered_code = instruction.name
+                if rendered:
+                    rendered_code += " " + " ".join(rendered)
+
+                res = {
+                    "next_vip": basic_block.next_vip,
+                    "sp_index": instruction.sp_index,
+                    "sp_reset": instruction.sp_reset,
+                    "sp_offset": instruction.sp_offset,
+                    "mnemonic": instruction.name,
+                    "operands": decoded_operands,
+                    "code": rendered_code,
+                }
                 vtil.parser_cache[addr] = res
                 return res
             it -= 1
+
+def find_instruction(addr, vtil):
+    decoded = decode_instruction(addr, vtil)
+    if decoded is None:
+        return None, 0, 0, 0, None
+    return (
+        decoded["next_vip"],
+        decoded["sp_index"],
+        decoded["sp_reset"],
+        decoded["sp_offset"],
+        decoded["code"],
+    )
 
 def find_block_address(vip, vtil):
     addr = 0
