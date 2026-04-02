@@ -3,9 +3,11 @@ A Binary Ninja plugin for loading and analyzing VTIL routines as a native Binary
 
 VTIL (Virtual-machine Translation Intermediate Language) is a project and set of tools used for binary deobfuscation and devirtualization.
 
+**Input format:** This plugin consumes separate VTIL files (files with `VTIL` magic at offset 0), not raw executables directly.
+
 ## Do I Need This Plugin?
 You probably want this plugin if:
-- You already have VTIL routine files and want to inspect them in Binary Ninja
+- You already have separate VTIL routine files and want to inspect them in Binary Ninja
 - You want CFG-aware navigation and LLIL lifting for VTIL instructions
 - You want to use Binary Ninja analysis workflows on recovered VTIL code
 
