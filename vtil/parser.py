@@ -14,6 +14,7 @@ class VTILParser(KaitaiStruct):
         amd64 = 0
         arm64 = 1
         virtual = 2
+        x86 = 3
     def __init__(self, _io, _parent=None, _root=None):
         self._io = _io
         self._parent = _parent

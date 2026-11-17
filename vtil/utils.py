@@ -24,7 +24,9 @@ def get_physical(reg, arch):
     if arch == 0:
         cs = Cs(CS_ARCH_X86, CS_MODE_64)
     elif arch == 1:
-        cs = Cs(CS_ARCH_ARM, CS_MODE_ARM)
+        cs = Cs(CS_ARCH_ARM64, CS_MODE_ARM)
+    elif arch == 3:
+        cs = Cs(CS_ARCH_X86, CS_MODE_32)
     return cs.reg_name(reg)
 
 # from: https://github.com/vtil-project/VTIL-Core/blob/master/VTIL-Architecture/arch/register_desc.hpp#L244
@@ -53,8 +55,8 @@ def to_string(flags, bit_offset, bit_count, local_id, architecture):
 
 
 def decode_register_desc(operand):
-    architecture = int(bin(operand.combined_id)[2:].zfill(64)[:56], 2)
-    local_id = int(bin(operand.combined_id)[2:].zfill(64)[56:], 2)
+    architecture = operand.combined_id >> 56
+    local_id = operand.combined_id & ((1 << 56) - 1)
     text = to_string(operand.flags, operand.bit_offset, operand.bit_count, local_id, architecture)
     return {
         "kind": "reg",

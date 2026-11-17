@@ -88,6 +88,7 @@ def _build_vtil_registers():
 
 class VTIL(Architecture):
     name = "VTIL"
+    address_size = 8
     max_instr_length = 1
     stack_pointer = "$sp"
 

@@ -29,6 +29,9 @@ class VTILView(BinaryView):
     @classmethod
     def is_valid_for_data(self, data):
         return data[0:4] == b'VTIL'
+
+    def perform_get_address_size(self) -> int:
+        return Architecture["VTIL"].address_size
     
     def init(self):
         max_instructions = 0
